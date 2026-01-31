@@ -49,13 +49,7 @@ DEFAULT_SCHEDULE = {
     "18:00": {
         "activity": "복싱 (운동)",
         "duration_minutes": 180,
-        "goal": "",
-        "flexible": False
-    },
-    "21:00": {
-        "activity": "정리 및 내일 준비",
-        "duration_minutes": 60,
-        "goal": "",
+        "goal": "항상 마지막!",
         "flexible": False
     }
 }
