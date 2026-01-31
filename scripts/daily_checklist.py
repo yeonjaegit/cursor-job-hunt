@@ -21,6 +21,7 @@ def create_checklist(date=None):
     year_month = date.strftime("%Y-%m")
     date_str = date.strftime("%Y-%m-%d")
     weekday = ["월", "화", "수", "목", "금", "토", "일"][date.weekday()]
+    weekday_num = date.weekday()  # 0=월, 1=화, 2=수, 3=목, 4=금, 5=토, 6=일
     
     # 월별 폴더 생성
     month_dir = DAILY_LOGS_DIR / year_month
@@ -33,7 +34,26 @@ def create_checklist(date=None):
         print(f"✅ 체크리스트가 이미 존재합니다: {checklist_path}")
         return checklist_path
     
-    # 체크리스트 내용
+    # 휴무일 체크 (수/토/일)
+    if weekday_num in [2, 5, 6]:  # 수요일(2), 토요일(5), 일요일(6)
+        rest_reason = "여자친구 만나는 날" if weekday_num == 2 else "알바"
+        content = f"""# 📋 {date_str} ({weekday}) - 휴무일
+
+## 💝 오늘은 휴무!
+
+**사유**: {rest_reason}
+
+잘 쉬고, 다음 학습일에 다시 화이팅! 💪
+
+---
+
+**Note**: 학습은 월/화/목/금 주 4일 진행합니다.
+"""
+        checklist_path.write_text(content, encoding="utf-8")
+        print(f"✅ 휴무일 안내 생성: {checklist_path}")
+        return checklist_path
+    
+    # 정규 학습 체크리스트 내용
     content = f"""# 📋 {date_str} ({weekday}) 체크리스트
 
 ## ✅ 오늘의 목표
