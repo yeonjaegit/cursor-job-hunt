@@ -87,7 +87,7 @@ python scripts/update_readme_progress.py
 
 ### 5. 코딩테스트
 - 문제 풀이 기록 (제목, 레벨, 플랫폼)
-- Level 1-5 분류
+- Level 0-5 분류
 - 해결/미해결 상태
 - 해결일 기록
 - 메모 기능

@@ -12,8 +12,8 @@ const CodingTest = () => {
   const [editingProblem, setEditingProblem] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
-    platform: '',
-    level: 1,
+    platform: '프로그래머스',
+    level: 0,
     is_solved: false,
     solved_date: new Date().toISOString().split('T')[0],
     url: '',
@@ -21,6 +21,7 @@ const CodingTest = () => {
   });
 
   const levelLabels = {
+    0: 'Lv.0',
     1: 'Lv.1',
     2: 'Lv.2',
     3: 'Lv.3',
@@ -62,8 +63,8 @@ const CodingTest = () => {
     setEditingProblem(null);
     setFormData({
       title: '',
-      platform: '',
-      level: 1,
+      platform: '프로그래머스',
+      level: 0,
       is_solved: false,
       solved_date: new Date().toISOString().split('T')[0],
       url: '',
@@ -80,7 +81,7 @@ const CodingTest = () => {
     setEditingProblem(problem);
     setFormData({
       title: problem.title,
-      platform: problem.platform,
+      platform: '프로그래머스',
       level: problem.level,
       is_solved: problem.is_solved || problem.status === 'solved',
       solved_date: problem.solved_date || new Date().toISOString().split('T')[0],
@@ -96,7 +97,7 @@ const CodingTest = () => {
 
     const payload = {
       title: formData.title,
-      platform: formData.platform || '프로그래머스',
+      platform: '프로그래머스',
       level: formData.level,
       status: formData.is_solved ? 'solved' : 'failed',
       solved_date: formData.solved_date,
@@ -147,7 +148,7 @@ const CodingTest = () => {
     try {
       await codingAPI.update(problemId, {
         title: problem.title,
-        platform: problem.platform,
+        platform: '프로그래머스',
         level: problem.level,
         status: currentlySolved ? 'failed' : 'solved',
         solved_date: problem.solved_date || new Date().toISOString().split('T')[0],
@@ -224,11 +225,11 @@ const CodingTest = () => {
                     ) : (
                       <span>{problem.title}</span>
                     )}
+                    <span className="problem-platform-inline">{problem.platform}</span>
                   </div>
-                  <span className="problem-level">{levelLabels[problem.level]}</span>
+                  <span className="problem-level">{levelLabels[problem.level] ?? `Lv.${problem.level}`}</span>
                 </div>
                 <div className="problem-info">
-                  <span className="problem-platform">{problem.platform}</span>
                   {(problem.notes || problem.memo) && <p className="problem-notes">{problem.notes || problem.memo}</p>}
                 </div>
                 {isAdmin && (
@@ -265,11 +266,11 @@ const CodingTest = () => {
                     ) : (
                       <span>{problem.title}</span>
                     )}
+                    <span className="problem-platform-inline">{problem.platform}</span>
                   </div>
-                  <span className="problem-level">{levelLabels[problem.level]}</span>
+                  <span className="problem-level">{levelLabels[problem.level] ?? `Lv.${problem.level}`}</span>
                 </div>
                 <div className="problem-info">
-                  <span className="problem-platform">{problem.platform}</span>
                   {(problem.notes || problem.memo) && <p className="problem-notes">{problem.notes || problem.memo}</p>}
                 </div>
                 {isAdmin && (
@@ -312,22 +313,12 @@ const CodingTest = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>플랫폼 *</label>
-                  <input
-                    type="text"
-                    value={formData.platform}
-                    onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
-                    placeholder="예: 백준, 프로그래머스"
-                    required
-                  />
-                </div>
-                <div className="form-group">
                   <label>난이도</label>
                   <select
                     value={formData.level}
                     onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) })}
                   >
-                    {[1, 2, 3, 4, 5].map((level) => (
+                    {[0, 1, 2, 3, 4, 5].map((level) => (
                       <option key={level} value={level}>
                         {levelLabels[level]}
                       </option>
