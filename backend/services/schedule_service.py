@@ -17,7 +17,8 @@ def get_default_schedule_templates():
         {'start': '09:00', 'end': '11:00', 'activity': '코딩테스트'},
         {'start': '11:00', 'end': '13:00', 'activity': '회사지원'},
         {'start': '13:00', 'end': '14:00', 'activity': '점심시간'},
-        {'start': '14:00', 'end': '17:00', 'activity': '프로젝트복기'},
+        {'start': '14:00', 'end': '15:30', 'activity': '프로젝트복기'},
+        {'start': '15:30', 'end': '17:00', 'activity': '면접준비'},
         {'start': '17:00', 'end': '18:00', 'activity': '정리 및 복습'},
         {'start': '18:00', 'end': '21:00', 'activity': '운동'},
     ]
