@@ -48,12 +48,12 @@ export const scheduleAPI = {
 };
 
 export const companiesAPI = {
-  getAll: () => api.get('companies'),
+  getAll: (q) => api.get('companies', { params: q ? { q } : {} }),
   create: (data) => api.post('companies', data),
   update: (id, data) => api.put(`companies/${id}`, data),
   delete: (id) => api.delete(`companies/${id}`),
   getStats: () => api.get('companies/stats'),
-  getPublicAll: () => api.get('public/companies'),
+  getPublicAll: (q) => api.get('public/companies', { params: q ? { q } : {} }),
 };
 
 export const codingAPI = {

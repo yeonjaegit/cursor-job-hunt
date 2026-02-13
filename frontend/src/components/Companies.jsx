@@ -8,6 +8,7 @@ const Companies = () => {
   const [stats, setStats] = useState({ total: 0, by_status: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
   const [formData, setFormData] = useState({
@@ -146,15 +147,38 @@ const Companies = () => {
     return <div className="loading">로딩 중...</div>;
   }
 
+  const filteredCompanies = companies.filter((company) =>
+    company.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
+  );
+
   return (
     <div className="section companies-section">
       <div className="section-header">
         <h2 className="section-title">회사 지원 현황</h2>
-        {isAdmin && (
-          <button className="btn btn-primary" onClick={handleAdd}>
-            + 회사 추가
-          </button>
-        )}
+        <div className="companies-header-actions">
+          <div className="companies-search">
+            <input
+              type="text"
+              placeholder="회사명 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button
+                type="button"
+                className="companies-search-clear"
+                onClick={() => setSearchTerm('')}
+              >
+                ×
+              </button>
+            )}
+          </div>
+          {isAdmin && (
+            <button className="btn btn-primary" onClick={handleAdd}>
+              + 회사 추가
+            </button>
+          )}
+        </div>
       </div>
 
       {stats && (
@@ -187,10 +211,12 @@ const Companies = () => {
       )}
 
       <div className="companies-list">
-        {companies.length === 0 ? (
-          <p className="empty-message">지원한 회사가 없습니다.</p>
+        {filteredCompanies.length === 0 ? (
+          <p className="empty-message">
+            {companies.length === 0 ? '지원한 회사가 없습니다.' : '검색 결과가 없습니다.'}
+          </p>
         ) : (
-          companies.map((company) => (
+          filteredCompanies.map((company) => (
             <div key={company.id} className="company-card">
               <div className="company-header">
                 <h3>{company.name}</h3>

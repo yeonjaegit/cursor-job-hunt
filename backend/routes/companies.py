@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from sqlalchemy import func
 from extensions import db
 from models import Company
 
@@ -14,9 +15,12 @@ def get_companies():
     try:
         user_id = int(get_jwt_identity())
         status = request.args.get('status')
+        q = request.args.get('q')
         query = Company.query.filter_by(user_id=user_id)
         if status:
             query = query.filter_by(status=status)
+        if q:
+            query = query.filter(Company.name.contains(q))
         companies = query.order_by(Company.applied_date.desc()).all()
         return jsonify({'companies': [c.to_dict() for c in companies]}), 200
     except Exception as e:
@@ -29,13 +33,20 @@ def create_company():
     try:
         user_id = int(get_jwt_identity())
         data = request.get_json()
+        name = data['name'].strip()
+        position = data['position'].strip()
+        duplicate = Company.query.filter_by(
+            user_id=user_id
+        ).filter(func.lower(Company.name) == name.lower()).first()
+        if duplicate:
+            return jsonify({'error': '이미 등록된 회사입니다.'}), 409
         interview_date = None
         if data.get('interview_date'):
             interview_date = datetime.strptime(data['interview_date'], '%Y-%m-%d').date()
         company = Company(
             user_id=user_id,
-            name=data['name'],
-            position=data['position'],
+            name=name,
+            position=position,
             status=data.get('status', 'applied'),
             applied_date=datetime.strptime(data['applied_date'], '%Y-%m-%d').date(),
             interview_date=interview_date,
@@ -58,10 +69,22 @@ def update_company(company_id):
         if not company:
             return jsonify({'error': '회사를 찾을 수 없습니다'}), 404
         data = request.get_json()
+        new_name = company.name
+        new_position = company.position
         if 'name' in data:
-            company.name = data['name']
+            new_name = data['name'].strip()
+            company.name = new_name
         if 'position' in data:
-            company.position = data['position']
+            new_position = data['position'].strip()
+            company.position = new_position
+        if 'name' in data or 'position' in data:
+            duplicate = Company.query.filter(
+                Company.user_id == user_id,
+                Company.id != company_id,
+                func.lower(Company.name) == new_name.lower()
+            ).first()
+            if duplicate:
+                return jsonify({'error': '이미 등록된 회사입니다.'}), 409
         if 'status' in data:
             company.status = data['status']
         if 'applied_date' in data:
